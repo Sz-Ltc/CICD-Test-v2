@@ -52,13 +52,13 @@ JIRA: <PROJECT-123>
 feat[auth]: add JWT-based user authentication
 
 Problem:
-The application needs secure user authentication to protect sensitive operations and provide personalized user experiences.
+  - The application needs secure user authentication to protect sensitive operations and provide personalized user experiences.
 
 Solution:
-Implemented JWT-based authentication system with bcrypt password hashing, including login, logout, and token refresh mechanisms. Added middleware for route protection and user session management.
+  - Implemented JWT-based authentication system with bcrypt password hashing, including login, logout, and token refresh mechanisms. Added middleware for route protection and user session management.
 
 Test:
-Added comprehensive unit tests for authentication functions (95% coverage) and integration tests for login/logout endpoints. Tested token expiration and refresh scenarios.
+  - Added comprehensive unit tests for authentication functions (95% coverage) and integration tests for login/logout endpoints. Tested token expiration and refresh scenarios.
 
 JIRA: AUTH-456
 ```
