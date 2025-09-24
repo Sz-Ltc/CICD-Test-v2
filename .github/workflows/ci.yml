@@ -263,7 +263,7 @@ jobs:
   build-and-archive:
     runs-on: ubuntu-latest
     name: Build and Archive Package
-    needs: [unit-tests, security-check, build-check]
+    needs: [unit-tests, build-check]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
