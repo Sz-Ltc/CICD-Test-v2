@@ -205,3 +205,15 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# CI artifacts
+bandit-report.json
+safety-report.json
+changed_files.txt
+py_files.txt
