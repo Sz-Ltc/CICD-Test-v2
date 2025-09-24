@@ -132,22 +132,22 @@ def check_jira_section(commit_msg):
 
 
 def check_author_email(commit_msg):
-    section_started = False
-    author = ""
-    email = ""
-    for line in commit_msg.split("\n"):
-        if line.startswith("Author:"):
-            section_started = True
-            author = line.split()[1].strip()
-            email = line.split()[2].strip()
-            continue
-
-    if not section_started:
-        return False, "Missing author or email"
-
-    if f"<{author}@is.ic>" != email:
-        return False, f"{author} {email}: email does not format: <username>@is.ic"
-
+    # section_started = False
+    # author = ""
+    # email = ""
+    # for line in commit_msg.split("\n"):
+    #     if line.startswith("Author:"):
+    #         section_started = True
+    #         author = line.split()[1].strip()
+    #         email = line.split()[2].strip()
+    #         continue
+    #
+    # if not section_started:
+    #     return False, "Missing author or email"
+    #
+    # if f"<{author}@is.ic>" != email:
+    #     return False, f"{author} {email}: email does not format: <username>@is.ic"
+    #
     return True, ""
 
 

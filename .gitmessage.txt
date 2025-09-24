@@ -1,6 +1,6 @@
 <type>[<SCOPE>]: <short-summary>
 
-Problem/Task:
+Problem:
     - Describe the issue/task
 
 Solution:
@@ -9,4 +9,4 @@ Solution:
 Test:
     - Validation steps/testcases
 
-JIRA: <XXX-<num>> + Jira link
+JIRA: <XXX-<num>>
