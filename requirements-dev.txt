@@ -5,3 +5,10 @@ mypy
 # Testing
 pytest
 pytest-cov
+
+# Building
+build
+twine
+
+# 从requirements.txt包含生产依赖
+-r requirements.txt

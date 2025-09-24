@@ -137,10 +137,9 @@ graph TD
     B --> C[Code Format Check]
     B --> D[Type Check]
     B --> E[Unit Tests]
-    C --> F[Security Check]
-    D --> F
-    E --> F
-    F --> G[Build Check]
+    C --> G[Build Check]
+    D --> G
+    E --> G
     G --> H{Main Branch?}
     H -->|Yes| I[Build & Archive Package]
     H -->|No| J[Complete]
@@ -176,19 +175,13 @@ graph TD
 - **Coverage reporting**: Generates coverage reports
 - **Integration**: Uploads coverage to Codecov (optional)
 
-#### 5. **Security Check** (`security-check`)
-
-- **Bandit**: Scans Python code for security issues
-- **Safety**: Checks dependencies for known vulnerabilities
-- **Artifacts**: Saves security reports for review
-
-#### 6. **Build Check** (`build-check`)
+#### 5. **Build Check** (`build-check`)
 
 - Validates package can be built correctly
 - **Dependencies**: All previous checks must pass
 - Uses `python -m build` and `twine check`
 
-#### 7. **Build and Archive** (`build-and-archive`)
+#### 6. **Build and Archive** (`build-and-archive`)
 
 - **Trigger**: Only on main branch pushes after all checks pass
 - **Package Building**: Creates wheel and source distributions
@@ -282,11 +275,12 @@ To enable automatic PyPI publishing:
 
 2. Push a git tag
 
-	 for version release:
+    for version release:
 
-	```bash
-	git tag v1.0.0git push origin v1.0.0
-	```
+    ```bash
+    git tag v1.0.0
+    git push origin v1.0.0
+    ```
 
 3. **Automatic publishing** will be triggered for tagged releases
 
