@@ -8,7 +8,6 @@ A comprehensive CI/CD template for Python projects with automated code quality c
 - 🎨 **Code formatting with Ruff and clang-format**
 - 🔧 **Static type checking with MyPy**
 - 🧪 **Comprehensive testing with pytest**
-- 🔒 **Security scanning with Bandit and Safety**
 - 📦 **Automated package building and validation**
 - 🚀 **Optional PyPI publishing and GitHub releases**
 
@@ -137,10 +136,10 @@ graph TD
     B --> C[Code Format Check]
     B --> D[Type Check]
     B --> E[Unit Tests]
-    C --> G[Build Check]
-    D --> G
-    E --> G
-    G --> H{Main Branch?}
+    C --> F[Build Check]
+    D --> F
+    E --> F
+    F --> G{Main Branch?}
     H -->|Yes| I[Build & Archive Package]
     H -->|No| J[Complete]
     I --> J
@@ -209,7 +208,6 @@ ruff format .          # Format code
 ruff check .          # Lint code
 mypy src/             # Type check
 pytest                # Run tests
-bandit -r src/        # Security scan
 
 # Commit with proper format
 git commit            # Uses .gitmessage template
@@ -275,12 +273,11 @@ To enable automatic PyPI publishing:
 
 2. Push a git tag
 
-    for version release:
+	 for version release:
 
-    ```bash
-    git tag v1.0.0
-    git push origin v1.0.0
-    ```
+	```bash
+	git tag v1.0.0git push origin v1.0.0
+	```
 
 3. **Automatic publishing** will be triggered for tagged releases
 
@@ -301,4 +298,3 @@ This project is licensed under the MIT License - see the [LICENSE](https://demo.
 - 📚 **Documentation**: Check the workflow files and configuration
 - 🐛 **Issues**: Report bugs via GitHub Issues
 - 💡 **Suggestions**: Feature requests welcome
-
