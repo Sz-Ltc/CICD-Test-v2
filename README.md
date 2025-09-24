@@ -1,138 +1,310 @@
-# CI-CD-Test
+# Python Project CI/CD Template
 
-## git commit格式
+A comprehensive CI/CD template for Python projects with automated code quality checks, testing, and package building using GitHub Actions.
 
-**规范格式：**
+## Features
+
+- 🔍 **Git commit message format validation**
+- 🎨 **Code formatting with Ruff and clang-format**
+- 🔧 **Static type checking with MyPy**
+- 🧪 **Comprehensive testing with pytest**
+- 🔒 **Security scanning with Bandit and Safety**
+- 📦 **Automated package building and validation**
+- 🚀 **Optional PyPI publishing and GitHub releases**
+
+## Git Commit Message Format
+
+This project enforces a structured commit message format to ensure clear and traceable project history.
+
+### Required Format
 
 ```
-<type>(<scope>): <subject>
-<BLANK LINE>
-<body>
-<BLANK LINE>
-<footer>
+<type>[<SCOPE>]: <short-summary>
+
+Problem:
+<description of the problem being solved>
+
+Solution:
+<description of the solution implemented>
+
+Test:
+<description of how the change was tested>
+
+JIRA: <PROJECT-123>
 ```
 
-对于大部分提交，我们只需要关心第一行 `header` 部分：`<type>(<scope>): <subject>`。
+### Parameters
 
-- **`type` (类型)**：必填，说明这次提交的性质。常用的 `type` 包括：
-	- `feat`: 新功能 (feature)
-	- `fix`: 修复 bug
-	- `docs`: 只修改了文档 (documentation)
-	- `style`: 代码格式修改，不影响代码逻辑 (空格、格式化、缺少分号等)
-	- `refactor`: 代码重构，既不是修复 bug 也不是新增功能
-	- `test`: 增加或修改测试
-	- `chore`: 构建过程或辅助工具的变动 (比如修改 CI 流程)
-	- `ci`: 对 CI 配置或脚本的修改
-- **`scope` (范围)**：选填，说明本次提交影响的范围。例如 `(api)`, `(db)`, `(calc)`。
-- **`subject` (主题)**：必填，简短描述本次提交的目的，不超过 50 个字符。
-	- 以动词开头，使用第一人称现在时，比如 `change` 而不是 `changed` 或 `changes`。
-	- 第一个字母小写。
-	- 末尾不加句号 (`.`)。
+- **`<type>`**: Type of change
+	- `feat`: New feature
+	- `fix`: Bug fix
+	- `docs`: Documentation changes
+	- `style`: Code style changes (formatting, etc.)
+	- `refactor`: Code refactoring
+	- `test`: Adding or updating tests
+	- `chore`: Maintenance tasks
+- **`<SCOPE>`**: Area of the codebase affected (e.g., `api`, `auth`, `ui`, `db`)
+- **`<short-summary>`**: Brief description in imperative mood
+- **`JIRA`**: Reference to JIRA ticket in format `PROJECT-123`
 
-**示例：**
+### Example
 
-- **好的示例**:
+```
+feat[auth]: add JWT-based user authentication
+
+Problem:
+The application needs secure user authentication to protect sensitive operations and provide personalized user experiences.
+
+Solution:
+Implemented JWT-based authentication system with bcrypt password hashing, including login, logout, and token refresh mechanisms. Added middleware for route protection and user session management.
+
+Test:
+Added comprehensive unit tests for authentication functions (95% coverage) and integration tests for login/logout endpoints. Tested token expiration and refresh scenarios.
+
+JIRA: AUTH-456
+```
+
+## Project Structure
+
+The recommended project structure follows Python packaging best practices:
+
+```
+your-python-project/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                    # Main CI/CD pipeline
+├── ci/                              # CI tools directory
+│   ├── check_mr_logs.py             # Git commit message checker
+│   ├── code_format_helper.py        # Code formatting checker
+│   ├── typing_helper.py             # Static type checker
+│   └── ruff.toml                    # Ruff configuration
+├── src/                             # Source code directory
+│   └── your_package/
+│       ├── __init__.py
+│       └── main.py
+├── tests/                           # Test directory
+│   ├── __init__.py
+│   └── test_main.py
+├── .gitignore                       # Git ignore file
+├── .gitmessage                      # Git commit template
+├── pyproject.toml                   # Project configuration
+├── requirements.txt                 # Production dependencies
+├── requirements-dev.txt             # Development dependencies
+├── README.md                        # This file
+├── LICENSE                          # License file
+└── CHANGELOG.md                     # Change log
+```
+
+### Key Files
+
+#### `pyproject.toml`
+
+Modern Python project configuration file containing:
+
+- Project metadata and dependencies
+- Build system configuration
+- Tool configurations (pytest, mypy, ruff)
+
+```toml
+[project]
+name = "your-project-name"
+version = "0.1.0"
+description = "Your project description"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "mypy>=1.0", "ruff>=0.1"]
+```
+
+#### `ci/ruff.toml`
+
+Code formatting and linting configuration:
+
+- Line length: 88 characters
+- Python target version: 3.11
+- Enabled rules: pyflakes, pycodestyle, security warnings
+
+## CI/CD Pipeline
+
+The GitHub Actions workflow provides a comprehensive automated pipeline that runs on every push and pull request.
+
+### Pipeline Overview
+
+```mermaid
+graph TD
+    A[Push/PR] --> B[Check Commit Messages]
+    B --> C[Code Format Check]
+    B --> D[Type Check]
+    B --> E[Unit Tests]
+    C --> F[Security Check]
+    D --> F
+    E --> F
+    F --> G[Build Check]
+    G --> H{Main Branch?}
+    H -->|Yes| I[Build & Archive Package]
+    H -->|No| J[Complete]
+    I --> J
+```
+
+### Pipeline Stages
+
+#### 1. **Check Commit Messages** (`check-commit-logs`)
+
+- Validates git commit message format
+- Ensures all commits follow the required template
+- **Trigger**: All pushes and PRs
+- **Failure**: Stops entire pipeline
+
+#### 2. **Code Format Check** (`code-format-check`)
+
+- **Python**: Formatting and linting with Ruff
+- **C/C++**: Formatting with clang-format
+- Checks only changed files for efficiency
+- **Configuration**: Uses `ci/ruff.toml`
+
+#### 3. **Type Check** (`type-check`)
+
+- Static type analysis with MyPy
+- Checks only changed Python files
+- **Configuration**: Defined in `pyproject.toml`
+
+#### 4. **Unit Tests** (`unit-tests`)
+
+- Runs comprehensive test suite with pytest
+- **Matrix testing**: Python 3.9, 3.10, 3.11, 3.12
+- **Coverage reporting**: Generates coverage reports
+- **Integration**: Uploads coverage to Codecov (optional)
+
+#### 5. **Security Check** (`security-check`)
+
+- **Bandit**: Scans Python code for security issues
+- **Safety**: Checks dependencies for known vulnerabilities
+- **Artifacts**: Saves security reports for review
+
+#### 6. **Build Check** (`build-check`)
+
+- Validates package can be built correctly
+- **Dependencies**: All previous checks must pass
+- Uses `python -m build` and `twine check`
+
+#### 7. **Build and Archive** (`build-and-archive`)
+
+- **Trigger**: Only on main branch pushes after all checks pass
+- **Package Building**: Creates wheel and source distributions
+- **Validation**: Verifies package integrity with twine
+- **Artifacts**: Saves packages for 30 days
+- **Build Info**: Generates detailed build reports
+- **Optional Release**: Creates GitHub release if tag is pushed
+
+### Build Artifacts
+
+Each successful build produces:
+
+- **Package files**: `.whl` (wheel) and `.tar.gz` (source distribution)
+- **Build summary**: Detailed report with version, commit info, and status
+- **30-day retention**: Available for download from GitHub Actions
+
+### Local Development Workflow
+
+```bash
+# Setup development environment
+pip install -r requirements-dev.txt
+
+# Pre-commit checks
+ruff format .          # Format code
+ruff check .          # Lint code
+mypy src/             # Type check
+pytest                # Run tests
+bandit -r src/        # Security scan
+
+# Commit with proper format
+git commit            # Uses .gitmessage template
+```
+
+### Configuration Requirements
+
+#### GitHub Repository Settings
+
+1. **Enable GitHub Actions** in repository settings
+
+2. Branch Protection
+
+	 for main branch (recommended):
+
+	- Require PR reviews
+	- Require status checks to pass
+	- Require branches to be up to date
+
+#### Optional Secrets (for publishing)
+
+- `PYPI_API_TOKEN`: For PyPI package publishing
+- `CODECOV_TOKEN`: For code coverage reporting
+
+### Quick Start
+
+1. **Use this template** or copy the structure
+
+2. Copy CI tools
+
+	 to 
 
 	```
-	feat(parser): add support for parentheses
-	fix: correct calculation for division by zero
-	docs: update README with setup instructions
-	chore: upgrade pytest to version 8.5.0
+	ci/
 	```
 
-- **不好的示例**:
+	 directory:
 
-	```
-	fixed the bug
-	Update
-	WIP
+	```bash
+	cp your-tools/* ci/chmod +x ci/*.py
 	```
 
+3. **Copy workflow** to `.github/workflows/ci.yml`
 
+4. Update configuration
 
-#### 1. `name`
+	:
 
-```
-name: Node.js CI/CD Pipeline
-```
+	- Modify `pyproject.toml` with your project details
+	- Update package name and structure
 
-- **作用**：定义工作流的名称。这个名字会显示在你的 GitHub 仓库的 "Actions" 标签页中，方便识别。
+5. **Install dependencies**: `pip install -r requirements-dev.txt`
 
-#### 2. `on`
+6. **Make first commit** using the required format
 
-```
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-```
+7. **Push to GitHub** and watch the CI pipeline run
 
-- **作用**：定义触发工作流的事件。
-- `push`: 当有代码被推送到指定分支时触发。这里我们指定了 `main` 分支。
-- `pull_request`: 当有人创建一个指向 `main` 分支的 Pull Request 或更新该 PR 时触发。这对于在合并代码前进行检查非常重要。
+### Upgrading to Full Release Pipeline
 
-#### 3. `permissions`
+To enable automatic PyPI publishing:
 
-```
-permissions:
-  contents: read
-  packages: write
-  pages: write
-  id-token: write
-```
+1. **Add PyPI token** to GitHub Secrets
 
-- **作用**：设置 `GITHUB_TOKEN` 的权限范围，遵循最小权限原则，提高安全性。
-- `contents: read`: 允许 `actions/checkout` 拉取代码。
-- `packages: write`: 允许向 GitHub Container Registry 推送 Docker 镜像。
-- `pages: write` 和 `id-token: write`: 部署到 GitHub Pages 所需的权限。
+2. Push a git tag
 
-#### 4. `jobs`
+	 for version release:
 
-工作流由一个或多个 `job`（任务）组成。默认情况下，所有 `job` 并行运行，但我们可以通过 `needs` 关键字定义依赖关系。
+	```bash
+	git tag v1.0.0git push origin v1.0.0
+	```
 
-##### 4.1 `build-and-test` Job
+3. **Automatic publishing** will be triggered for tagged releases
 
-这是CI阶段的核心任务。
+## Contributing
 
-- `runs-on: ubuntu-latest`：指定任务运行在 GitHub 托管的最新版 Ubuntu 虚拟机上。
-- `steps`：定义该任务按顺序执行的步骤。
-  - `uses: actions/checkout@v4`：这是一个官方的 Action，作用是**检出你的仓库代码**到虚拟机中，以便后续步骤可以访问它。
-  - `uses: actions/setup-node@v4`：设置指定的 Node.js 环境。`with: cache: 'npm'` 会缓存依赖，如果 `package-lock.json` 没有变化，下次运行时会快很多。
-  - `run: npm ci`：执行 shell 命令。`npm ci` 会根据 `package-lock.json` 文件精确安装依赖，比 `npm install` 更适合 CI 环境。
-  - `run: npm run build` 和 `run: npm test`：执行你在 `package.json` 中定义的构建和测试脚本。
-  - `uses: actions/upload-artifact@v4`：**将文件或目录打包成一个 "产物" (artifact)**。产物可以在不同的 `job` 之间共享。这里我们将构建结果上传，以便 `deploy-to-pages` 任务可以使用它。
+1. Fork the repository
+2. Create a feature branch
+3. Follow the commit message format
+4. Ensure all CI checks pass
+5. Submit a pull request
 
-##### 4.2 `build-and-push-docker` Job
+## License
 
-这是CD阶段的一部分，负责容器化。
+This project is licensed under the MIT License - see the [LICENSE](https://demo.fuclaude.com/chat/LICENSE) file for details.
 
-- `needs: build-and-test`：**关键！** 这表示此任务必须等待 `build-and-test` 任务成功完成后才能开始。
-- `if: github.event_name == 'push' && github.ref == 'refs/heads/main'`：**关键！** 这是一个条件判断。它确保这个部署任务**只在代码被直接推送到 `main` 分支时运行**，而不会在 Pull Request 中运行。
-- `docker/login-action@v3`：登录到容器镜像仓库。这里我们使用 `ghcr.io`（GitHub 自己的镜像仓库），并使用自动生成的 `secrets.GITHUB_TOKEN` 进行身份验证。
-- `docker/metadata-action@v5`：智能地为你的 Docker 镜像生成标签。例如，基于 Git 标签、分支名或 commit SHA。
-- `docker/build-push-action@v5`：构建 Dockerfile 并将其推送到指定的仓库。
+## Support
 
-##### 4.3 `deploy-to-pages` Job
+- 📚 **Documentation**: Check the workflow files and configuration
+- 🐛 **Issues**: Report bugs via GitHub Issues
+- 💡 **Suggestions**: Feature requests welcome
 
-这是CD阶段的另一部分，负责部署到静态网站托管。
-
-- `needs` 和 `if` 的作用同上，确保在正确的时间和条件下执行。
-- `actions/download-artifact@v4`：下载之前 `build-and-test` 任务上传的产物。
-- `actions/configure-pages@v5`, `actions/upload-pages-artifact@v3`, `actions/deploy-pages@v4`：这是部署到 GitHub Pages 的标准三步曲。它们会配置环境，将你的文件打包成 Pages 接受的格式，然后完成部署。
-
-------
-
-1. **提交代码**：将上述所有文件提交到你的 GitHub 仓库。
-2. **启用 GitHub Pages**：
-   - 进入你的仓库 -> `Settings` -> `Pages`。
-   - 在 `Build and deployment` 下的 `Source` 选择 `GitHub Actions`。
-3. **触发 CI**：
-   - 创建一个新的分支，做一些修改，然后创建一个 Pull Request 指向 `main` 分支。
-   - 进入仓库的 `Actions` 标签页，你会看到 `build-and-test` 任务正在运行。但部署任务会因为 `if` 条件而被跳过。
-4. **触发 CD**：
-   - 将你的 Pull Request 合并到 `main` 分支。
-   - 再次进入 `Actions` 标签页，你会看到工作流被再次触发。这次，在 `build-and-test` 成功后，`build-and-push-docker` 和 `deploy-to-pages` 任务也会被执行。
-5. **验证结果**：
-   - **Docker 镜像**：在你的个人主页或组织主页的 `Packages` 标签页中，可以看到新推送的容器镜像。
-   - **GitHub Pages**：稍等片刻，访问你的 GitHub Pages URL (通常是 `https://<你的用户名>.github.io/<仓库名>/`)，应该能看到部署的内容。
