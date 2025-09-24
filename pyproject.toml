@@ -48,7 +48,7 @@ Repository = "https://github.com/your-username/your-project"
 Issues = "https://github.com/your-username/your-project/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/your_package"]
+packages = ["src/py_calculator"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

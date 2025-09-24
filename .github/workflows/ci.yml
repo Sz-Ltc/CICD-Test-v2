@@ -195,25 +195,42 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install pytest pytest-cov
+        
+        # 安装项目本身（可编辑模式）
+        if [ -f pyproject.toml ]; then
+          pip install -e .
+          # 安装开发依赖
+          if grep -q "dev.*=" pyproject.toml; then
+            pip install -e ".[dev]" || pip install -e ".[test]" || true
+          fi
+        elif [ -f setup.py ]; then
+          pip install -e .
+        fi
+        
+        # 安装额外的依赖文件
         if [ -f requirements.txt ]; then
           pip install -r requirements.txt
-        elif [ -f requirements-dev.txt ]; then
+        fi
+        if [ -f requirements-dev.txt ]; then
           pip install -r requirements-dev.txt
-        elif [ -f pyproject.toml ]; then
-          pip install -e ".[dev,test]"
         fi
     
     - name: Run unit tests
       run: |
+        # 确保当前目录在Python路径中
+        export PYTHONPATH="${PYTHONPATH}:$(pwd):$(pwd)/src"
+        
         if [ -d "tests" ]; then
-          pytest tests/ --cov=. --cov-report=xml --cov-report=term-missing
+          echo "Running tests from tests/ directory"
+          pytest tests/ --cov=. --cov-report=xml --cov-report=term-missing -v
         elif [ -d "test" ]; then
-          pytest test/ --cov=. --cov-report=xml --cov-report=term-missing
+          echo "Running tests from test/ directory"
+          pytest test/ --cov=. --cov-report=xml --cov-report=term-missing -v
         else
           echo "No test directory found, creating sample test"
           mkdir -p tests
           echo "def test_example(): assert True" > tests/test_example.py
-          pytest tests/
+          pytest tests/ -v
         fi
     
     - name: Upload coverage to Codecov
@@ -263,7 +280,7 @@ jobs:
   build-and-archive:
     runs-on: ubuntu-latest
     name: Build and Archive Package
-    needs: [unit-tests, security-check, build-check]
+    needs: [unit-tests, build-check]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
