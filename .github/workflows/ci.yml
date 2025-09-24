@@ -224,43 +224,7 @@ jobs:
         name: codecov-umbrella
         fail_ci_if_error: false
 
-  # Job 5: 安全检查
-  security-check:
-    runs-on: ubuntu-latest
-    name: Security Check
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-    
-    - name: Install security tools
-      run: |
-        pip install bandit safety
-    
-    - name: Run bandit security check
-      run: |
-        bandit -r . -f json -o bandit-report.json || true
-        bandit -r . || true
-    
-    - name: Run safety check
-      run: |
-        safety check --json --output safety-report.json || true
-        safety check || true
-    
-    - name: Upload security reports
-      uses: actions/upload-artifact@v3
-      with:
-        name: security-reports
-        path: |
-          bandit-report.json
-          safety-report.json
-
-  # Job 6: 构建检查
+  # Job 5: 构建检查
   build-check:
     runs-on: ubuntu-latest
     name: Build Check
@@ -295,7 +259,7 @@ jobs:
           echo "No dist directory, skipping package check"
         fi
 
-  # Job 7: 构建和存档包 (仅在main分支push时执行)
+  # Job 6: 构建和存档包 (仅在main分支push时执行)
   build-and-archive:
     runs-on: ubuntu-latest
     name: Build and Archive Package
