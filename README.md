@@ -140,8 +140,8 @@ graph TD
     D --> F
     E --> F
     F --> G{Main Branch?}
-    H -->|Yes| I[Build & Archive Package]
-    H -->|No| J[Complete]
+    G -->|Yes| I[Build & Archive Package]
+    G -->|No| J[Complete]
     I --> J
 ```
 
