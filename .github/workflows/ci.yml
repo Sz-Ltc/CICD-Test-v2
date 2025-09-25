@@ -393,7 +393,7 @@ jobs:
         cat build-summary.md
     
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: python-package-${{ steps.build_info.outputs.commit_sha }}
         path: |
